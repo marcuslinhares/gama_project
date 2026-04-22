@@ -18,11 +18,11 @@
 - Create: `backend/src/app.ts`
 - Create: `backend/src/index.ts`
 
-- [ ] **Step 1: Create package.json with dependencies**
-- [ ] **Step 2: Initialize TypeScript configuration**
-- [ ] **Step 3: Create Express app instance**
-- [ ] **Step 4: Create entry point and start server**
-- [ ] **Step 5: Commit**
+- [x] **Step 1: Create package.json with dependencies**
+- [x] **Step 2: Initialize TypeScript configuration**
+- [x] **Step 3: Create Express app instance**
+- [x] **Step 4: Create entry point and start server**
+- [x] **Step 5: Commit**
 
 ### Task 2: Product Model & Database Schema
 
@@ -30,9 +30,9 @@
 - Create: `backend/src/models/product.model.ts`
 - Create: `backend/src/db/migrations/001_create_products.sql`
 
-- [ ] **Step 1: Define Product interface with tiered pricing**
-- [ ] **Step 2: Write SQL migration for products table**
-- [ ] **Step 3: Commit**
+- [x] **Step 1: Define Product interface with tiered pricing**
+- [x] **Step 2: Write SQL migration for products table**
+- [x] **Step 3: Commit**
 
 ### Task 3: Product API Endpoints (TDD)
 
