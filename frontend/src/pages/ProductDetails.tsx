@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, ShoppingCart, Check } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 interface TieredPrice {
   minQty: number;
@@ -25,12 +26,20 @@ interface ProductDetailsProps {
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+  const { addItem } = useCart();
 
   const getCurrentPrice = () => {
     const applicableTier = [...product.tieredPricing]
       .reverse()
       .find(tier => quantity >= tier.minQty);
     return applicableTier ? applicableTier.price : product.unitPrice;
+  };
+
+  const handleAddToCart = () => {
+    addItem(product, quantity);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -99,6 +108,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm active:scale-95 transition-all"
                 >
+                  <circle cx="12" cy="12" r="10" />
                   <Minus size={20} className="text-primary" />
                 </button>
                 <span className="text-xl font-bold text-slate-900">{quantity} Cx</span>
@@ -123,9 +133,26 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
 
       {/* Action Bar */}
       <footer className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 border-t border-surface-low shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-        <button className="w-full bg-primary hover:bg-primary-container text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
-          <ShoppingCart size={20} />
-          Adicionar ao Carrinho
+        <button 
+          onClick={handleAddToCart}
+          disabled={added}
+          className={`w-full font-bold py-4 rounded-2xl flex items-center justify-center gap-3 shadow-lg transition-all active:scale-[0.98] ${
+            added 
+              ? 'bg-green-500 text-white shadow-green-200' 
+              : 'bg-primary hover:bg-primary-container text-white shadow-primary/20'
+          }`}
+        >
+          {added ? (
+            <>
+              <Check size={20} />
+              Adicionado!
+            </>
+          ) : (
+            <>
+              <ShoppingCart size={20} />
+              Adicionar ao Carrinho
+            </>
+          )}
         </button>
       </footer>
     </div>
