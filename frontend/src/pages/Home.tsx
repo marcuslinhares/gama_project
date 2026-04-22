@@ -45,7 +45,11 @@ const MOCK_PRODUCTS = [
   }
 ];
 
-const Home: React.FC = () => {
+interface HomeProps {
+  onSelectProduct: (product: any) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ onSelectProduct }) => {
   const [selectedCategory, setSelectedCategory] = useState('Tudo');
 
   return (
@@ -103,7 +107,11 @@ const Home: React.FC = () => {
             {MOCK_PRODUCTS
               .filter(p => selectedCategory === 'Tudo' || p.category === selectedCategory)
               .map(product => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  onClick={() => onSelectProduct(product)} 
+                />
               ))}
           </div>
         </section>

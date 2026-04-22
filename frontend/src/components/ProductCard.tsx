@@ -19,11 +19,12 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
+  onClick: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   return (
-    <div className="card p-4 flex flex-col h-full group">
+    <div onClick={onClick} className="card p-4 flex flex-col h-full group cursor-pointer active:scale-[0.98] transition-all">
       <div className="bg-surface-low rounded-md h-40 mb-4 flex items-center justify-center overflow-hidden">
         {product.image ? (
           <img src={product.image} alt={product.name} className="object-cover h-full w-full" />
