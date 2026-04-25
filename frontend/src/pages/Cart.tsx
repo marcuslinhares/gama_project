@@ -4,9 +4,10 @@ import { useCart } from '../context/CartContext';
 
 interface CartProps {
   onBack: () => void;
+  onCheckout: () => void;
 }
 
-const Cart: React.FC<CartProps> = ({ onBack }) => {
+const Cart: React.FC<CartProps> = ({ onBack, onCheckout }) => {
   const { items, updateQuantity, removeItem, subtotal, totalItems } = useCart();
 
   const frete = subtotal > 500 ? 0 : 25.00; // Frete grátis Russas acima de R$ 500
@@ -114,7 +115,10 @@ const Cart: React.FC<CartProps> = ({ onBack }) => {
       </main>
 
       <footer className="fixed bottom-0 left-0 right-0 bg-white px-4 py-6 border-t border-surface-low shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-        <button className="w-full bg-primary hover:bg-primary-container text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
+        <button 
+          onClick={onCheckout}
+          className="w-full bg-primary hover:bg-primary-container text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all"
+        >
           Finalizar Pedido
         </button>
       </footer>

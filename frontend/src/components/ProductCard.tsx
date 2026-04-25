@@ -43,7 +43,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
         <div>
           <span className="text-xs text-slate-500 block">A partir de</span>
           <span className="text-lg font-bold text-primary">
-            R$ {product.tieredPricing[product.tieredPricing.length - 1].price.toFixed(2)}
+            R$ {Number(product.tieredPricing[product.tieredPricing.length - 1].price).toFixed(2)}
           </span>
           <span className="text-[10px] text-slate-500 ml-1">/ Cx</span>
         </div>

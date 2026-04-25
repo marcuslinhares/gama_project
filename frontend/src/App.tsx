@@ -1,16 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
+import Login from './pages/Login';
+import Orders from './pages/Orders';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminOrders from './pages/admin/AdminOrders';
 import { useCart } from './context/CartContext';
-import { Home as HomeIcon, ShoppingCart, ClipboardList } from 'lucide-react';
+import { Home as HomeIcon, ShoppingCart, ClipboardList, ShieldCheck } from 'lucide-react';
 
-type View = 'home' | 'details' | 'cart';
+type View = 'home' | 'details' | 'cart' | 'checkout' | 'success' | 'orders' | 'admin_dashboard' | 'admin_orders';
 
 function App() {
+  const [user, setUser] = useState<any>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('auth_token'));
   const [view, setView] = useState<View>('home');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const { totalItems } = useCart();
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
+  const { totalItems, clearCart } = useCart();
+
+  useEffect(() => {
+    // Tenta recuperar o usuário do localStorage se houver um token
+    const storedUser = localStorage.getItem('auth_user');
+    if (token && storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      // Se for admin e estiver na home, redireciona para dashboard
+      if (parsedUser.role === 'ADMIN' && view === 'home') {
+        setView('admin_dashboard');
+      }
+    }
+  }, [token]);
+
+  const handleLoginSuccess = (userData: any, userToken: string) => {
+    localStorage.setItem('auth_token', userToken);
+    localStorage.setItem('auth_user', JSON.stringify(userData));
+    setToken(userToken);
+    setUser(userData);
+    if (userData.role === 'ADMIN') {
+      setView('admin_dashboard');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    setToken(null);
+    setUser(null);
+    setView('home');
+  };
 
   const navigateToDetails = (product: any) => {
     setSelectedProduct(product);
@@ -22,14 +62,29 @@ function App() {
     setView('home');
   };
 
+  const handleCheckoutSuccess = (orderId: string) => {
+    setLastOrderId(orderId);
+    clearCart();
+    setView('success');
+  };
+
+  if (!token) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-surface">
-      {view === 'home' && <Home onSelectProduct={navigateToDetails} />}
+      {view === 'home' && <Home user={user} onSelectProduct={navigateToDetails} />}
       {view === 'details' && <ProductDetails product={selectedProduct} onBack={navigateToHome} />}
-      {view === 'cart' && <Cart onBack={navigateToHome} />}
+      {view === 'cart' && <Cart onBack={navigateToHome} onCheckout={() => setView('checkout')} />}
+      {view === 'checkout' && <Checkout onBack={() => setView('cart')} onSuccess={handleCheckoutSuccess} />}
+      {view === 'success' && lastOrderId && <OrderSuccess orderId={lastOrderId} onHome={navigateToHome} />}
+      {view === 'orders' && <Orders />}
+      {view === 'admin_dashboard' && <AdminDashboard onNavigate={setView} onLogout={handleLogout} />}
+      {view === 'admin_orders' && <AdminOrders onBack={() => setView('admin_dashboard')} onLogout={handleLogout} />}
       
       {/* Bottom Nav */}
-      {view !== 'details' && (
+      {view !== 'details' && view !== 'checkout' && view !== 'success' && view !== 'cart' && !view.startsWith('admin') && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-20">
           <button 
             onClick={() => setView('home')}
@@ -52,11 +107,25 @@ function App() {
             <span className="text-[10px] font-bold">Carrinho</span>
           </button>
           
-          <button className="text-slate-400 flex flex-col items-center gap-1 opacity-50 cursor-not-allowed">
+          <button 
+            onClick={() => setView('orders')}
+            className={`flex flex-col items-center gap-1 transition-all ${view === 'orders' ? 'text-primary scale-110' : 'text-slate-400'}`}
+          >
             <ClipboardList size={20} />
             <span className="text-[10px] font-bold">Pedidos</span>
           </button>
         </nav>
+      )}
+
+      {/* Admin Quick Switch (Dev Only) */}
+      {user?.role === 'ADMIN' && view !== 'admin_dashboard' && view !== 'admin_orders' && (
+        <button 
+          onClick={() => setView('admin_dashboard')}
+          className="fixed bottom-24 right-4 bg-slate-900 text-white p-3 rounded-full shadow-lg z-30 flex items-center gap-2"
+        >
+          <ShieldCheck size={20} />
+          <span className="text-[10px] font-bold">Painel Admin</span>
+        </button>
       )}
     </div>
   );

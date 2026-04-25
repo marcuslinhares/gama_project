@@ -1,0 +1,9 @@
+{
+  "backend/src/**/*.ts": [
+    "npm --prefix backend run lint",
+    "npm --prefix backend run test -- --findRelatedTests"
+  ],
+  "frontend/src/**/*.{ts,tsx}": [
+    "npm --prefix frontend run lint"
+  ]
+}

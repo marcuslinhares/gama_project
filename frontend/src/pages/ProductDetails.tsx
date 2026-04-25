@@ -30,10 +30,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
   const { addItem } = useCart();
 
   const getCurrentPrice = () => {
-    const applicableTier = [...product.tieredPricing]
+    const pricing = product.tieredPricing || [];
+    const applicableTier = [...pricing]
       .reverse()
       .find(tier => quantity >= tier.minQty);
-    return applicableTier ? applicableTier.price : product.unitPrice;
+    return applicableTier ? Number(applicableTier.price) : Number(product.unitPrice);
   };
 
   const handleAddToCart = () => {

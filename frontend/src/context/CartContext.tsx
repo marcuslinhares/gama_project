@@ -28,6 +28,7 @@ interface CartContextType {
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  addMultipleItems: (items: { product: Product, quantity: number }[]) => void;
   subtotal: number;
   totalItems: number;
 }
@@ -35,10 +36,11 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const calculatePriceAtQty = (product: Product, qty: number) => {
-  const applicableTier = [...product.tieredPricing]
+  const pricing = product.tieredPricing || [];
+  const applicableTier = [...pricing]
     .reverse()
     .find(tier => qty >= tier.minQty);
-  return applicableTier ? applicableTier.price : product.unitPrice;
+  return applicableTier ? Number(applicableTier.price) : Number(product.unitPrice);
 };
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -86,11 +88,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => setItems([]);
 
+  const addMultipleItems = (newItems: { product: Product, quantity: number }[]) => {
+    const formattedItems = newItems.map(item => ({
+      product: item.product,
+      quantity: item.quantity,
+      priceAtQty: calculatePriceAtQty(item.product, item.quantity)
+    }));
+    setItems(formattedItems);
+  };
+
   const subtotal = items.reduce((acc, item) => acc + (item.quantity * item.priceAtQty), 0);
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, subtotal, totalItems }}>
+    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, addMultipleItems, subtotal, totalItems }}>
       {children}
     </CartContext.Provider>
   );

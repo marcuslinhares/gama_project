@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx lint-staged
+# Security scan
+# osv-scanner --lockfile backend/package-lock.json

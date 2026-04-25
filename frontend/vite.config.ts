@@ -38,4 +38,12 @@ export default defineConfig({
       }
     })
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://api:3001',
+        changeOrigin: true,
+      }
+    }
+  }
 })
