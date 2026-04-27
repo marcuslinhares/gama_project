@@ -44,13 +44,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
   };
 
   return (
-    <div className="bg-white min-h-screen pb-24">
+    <div className="bg-white dark:bg-surface-lowest min-h-screen pb-24">
       {/* Header */}
-      <header className="px-4 py-6 flex items-center gap-4 sticky top-0 bg-white/80 backdrop-blur-md z-10">
+      <header className="px-4 py-6 flex items-center gap-4 sticky top-0 bg-white/80 dark:bg-surface-lowest/80 backdrop-blur-md z-30">
         <button onClick={onBack} className="p-2 hover:bg-surface-low rounded-full transition-colors">
-          <ArrowLeft size={24} className="text-slate-900" />
+          <ArrowLeft size={24} className="text-slate-900 dark:text-slate-100" />
         </button>
-        <h1 className="text-lg font-bold text-slate-900 line-clamp-1">Detalhes do Produto</h1>
+        <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100 line-clamp-1">Detalhes do Produto</h1>
       </header>
 
       <main>
@@ -65,23 +65,23 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
 
         <div className="px-4 mt-6">
           <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
-          <h2 className="text-2xl font-bold text-slate-900 mt-2">{product.name}</h2>
-          <p className="text-sm text-slate-400 mt-1">SKU: {product.sku}</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-2">{product.name}</h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">SKU: {product.sku}</p>
 
           <div className="mt-6 flex items-baseline gap-2">
             <span className="text-3xl font-bold text-primary">R$ {getCurrentPrice().toFixed(2)}</span>
-            <span className="text-sm text-slate-500">/ Caixa</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">/ Caixa</span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
             Preço por unidade: R$ {(getCurrentPrice() / 24).toFixed(2)} (Ref. Caixa c/ 24)
           </p>
 
           {/* Tiered Pricing Table */}
           <section className="mt-8">
-            <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest text-[10px]">Preços por Atacado</h3>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-widest text-[10px]">Preços por Atacado</h3>
             <div className="bg-surface-low rounded-2xl overflow-hidden">
               <table className="w-full text-left text-sm">
-                <thead className="bg-surface-high/50 text-slate-500">
+                <thead className="bg-surface-high/50 text-slate-500 dark:text-slate-400">
                   <tr>
                     <th className="px-4 py-3 font-semibold text-[11px] uppercase tracking-wider">Qtd. Mínima</th>
                     <th className="px-4 py-3 font-semibold text-[11px] uppercase tracking-wider">Valor Unit.</th>
@@ -91,7 +91,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
                   {product.tieredPricing.map((tier, idx) => {
                     const isActive = quantity >= tier.minQty && (idx === product.tieredPricing.length - 1 || quantity < product.tieredPricing[idx+1].minQty);
                     return (
-                      <tr key={idx} className={isActive ? 'bg-primary/5 text-primary font-bold' : 'text-slate-600'}>
+                      <tr key={idx} className={isActive ? 'bg-primary/5 text-primary font-bold' : 'text-slate-600 dark:text-slate-300'}>
                         <td className="px-4 py-4">{tier.minQty} {tier.minQty === 1 ? 'Caixa' : 'Caixas'}</td>
                         <td className="px-4 py-4">R$ {tier.price.toFixed(2)}</td>
                       </tr>
@@ -107,15 +107,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
              <div className="flex items-center justify-between bg-surface-low p-2 rounded-2xl">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm active:scale-95 transition-all"
+                  className="w-12 h-12 flex items-center justify-center bg-white dark:bg-surface-low rounded-xl shadow-sm active:scale-95 transition-all"
                 >
                   <circle cx="12" cy="12" r="10" />
                   <Minus size={20} className="text-primary" />
                 </button>
-                <span className="text-xl font-bold text-slate-900">{quantity} Cx</span>
-                <button 
+                <span className="text-xl font-bold text-slate-900 dark:text-slate-100">{quantity} Cx</span>
+                <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm active:scale-95 transition-all"
+                  className="w-12 h-12 flex items-center justify-center bg-white dark:bg-surface-low rounded-xl shadow-sm active:scale-95 transition-all"
                 >
                   <Plus size={20} className="text-primary" />
                 </button>
@@ -124,8 +124,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
 
           {/* Description */}
           <section className="mt-8">
-            <h3 className="text-sm font-bold text-slate-900 mb-2 uppercase tracking-widest text-[10px]">Descrição</h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2 uppercase tracking-widest text-[10px]">Descrição</h3>
+            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
               {product.description || "Ideal para reposição de estoque em pequenos varejos. Produto de alta rotatividade com garantia de procedência do distribuidor líder da região de Russas."}
             </p>
           </section>
@@ -133,7 +133,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
       </main>
 
       {/* Action Bar */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 border-t border-surface-low shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white dark:bg-surface-lowest px-4 py-4 border-t border-surface-low shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
         <button 
           onClick={handleAddToCart}
           disabled={added}

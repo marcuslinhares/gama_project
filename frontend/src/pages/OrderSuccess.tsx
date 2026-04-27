@@ -14,19 +14,19 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onHome }) => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center p-6 text-center">
+    <div className="bg-white dark:bg-surface-lowest min-h-screen flex flex-col items-center justify-center p-6 text-center">
       <div className="relative mb-8">
         <div className="absolute inset-0 bg-green-100 rounded-full scale-150 animate-pulse" />
         <CheckCircle size={80} className="text-green-500 relative z-10" />
       </div>
       
-      <h2 className="text-2xl font-black text-slate-900 leading-tight">Pedido Realizado<br />com Sucesso!</h2>
-      <p className="text-slate-500 mt-4 max-w-[240px]">
+      <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 leading-tight">Pedido Realizado<br />com Sucesso!</h2>
+      <p className="text-slate-500 dark:text-slate-400 mt-4 max-w-[240px]">
         O distribuidor foi notificado e revisará seu crédito em breve.
       </p>
 
       <div className="mt-8 bg-surface-low px-6 py-4 rounded-2xl border border-surface-high/20">
-        <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest block mb-1">Número do Pedido</span>
+        <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest block mb-1">Número do Pedido</span>
         <span className="text-xl font-black text-primary tracking-tight">#{orderId}</span>
       </div>
       
@@ -40,13 +40,13 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId, onHome }) => {
         
         <button 
           onClick={onHome} 
-          className="w-full flex items-center justify-center gap-2 text-slate-500 font-bold py-4 hover:text-primary transition-colors"
+          className="w-full flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-bold py-4 hover:text-primary transition-colors"
         >
           Voltar ao Catálogo <ArrowRight size={18} />
         </button>
       </div>
 
-      <p className="mt-12 text-[10px] text-slate-300 font-medium">
+      <p className="mt-12 text-[10px] text-slate-300 dark:text-slate-600 font-medium">
         Marketplace B2B Russas • Powered by Nexus
       </p>
     </div>

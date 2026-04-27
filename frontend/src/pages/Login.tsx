@@ -77,15 +77,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           <div className="bg-primary/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <Smartphone size={40} className="text-primary" />
           </div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Marketplace B2B</h2>
-          <p className="text-slate-500 mt-2">Acesso exclusivo para lojistas de Russas/CE</p>
+          <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Marketplace B2B</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">Acesso exclusivo para lojistas de Russas/CE</p>
         </div>
 
-        <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
+        <div className="bg-white dark:bg-surface-lowest p-8 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
           {step === 'phone' ? (
             <form onSubmit={handleRequestOTP} className="space-y-6">
               <div>
-                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block mb-2 px-1">
+                <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest block mb-2 px-1">
                   Seu Telefone (WhatsApp)
                 </label>
                 <input
@@ -112,12 +112,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           ) : (
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div className="text-center mb-4">
-                <p className="text-sm text-slate-500">Enviamos um código para o número <br /><span className="font-bold text-slate-900">{phone}</span></p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Enviamos um código para o número <br /><span className="font-bold text-slate-900 dark:text-slate-100">{phone}</span></p>
                 <button type="button" onClick={() => setView('phone')} className="text-xs text-primary font-bold mt-1">Alterar número</button>
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block mb-2 px-1">
+                <label className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest block mb-2 px-1">
                   Código de 6 dígitos
                 </label>
                 <input
@@ -145,7 +145,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           )}
         </div>
 
-        <p className="text-center text-[10px] text-slate-400 font-medium">
+        <p className="text-center text-[10px] text-slate-400 dark:text-slate-500 font-medium">
           Ao entrar, você concorda com nossos termos de uso e política de privacidade.
         </p>
       </div>
