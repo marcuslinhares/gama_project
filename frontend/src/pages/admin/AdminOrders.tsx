@@ -52,19 +52,19 @@ const AdminOrders: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ o
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen p-6">
+    <div className="bg-slate-50 dark:bg-surface min-h-screen p-6">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="bg-white p-2 rounded-lg shadow-sm"><ChevronLeft /></button>
-          <h1 className="text-2xl font-black text-slate-900">Gestão de Pedidos</h1>
+          <button onClick={onBack} className="bg-white dark:bg-surface-lowest p-2 rounded-lg shadow-sm"><ChevronLeft /></button>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">Gestão de Pedidos</h1>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={fetchOrders} className="bg-white text-slate-600 p-2 rounded-lg shadow-sm hover:bg-slate-100 transition-all">
+          <button onClick={fetchOrders} className="bg-white dark:bg-surface-lowest text-slate-600 dark:text-slate-300 p-2 rounded-lg shadow-sm hover:bg-slate-100 dark:hover:bg-surface-low transition-all">
             <RefreshCcw size={20} />
           </button>
           <button 
             onClick={onLogout}
-            className="flex items-center gap-2 bg-white text-red-500 font-bold px-4 py-2 rounded-xl shadow-sm border border-red-50 hover:bg-red-50 transition-all"
+            className="flex items-center gap-2 bg-white dark:bg-surface-lowest text-red-500 font-bold px-4 py-2 rounded-xl shadow-sm border border-red-50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
           >
             <LogOut size={18} /> Sair
           </button>
@@ -73,30 +73,30 @@ const AdminOrders: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ o
 
       {loading ? (
         <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 bg-white rounded-xl animate-pulse" />)}
+          {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 bg-white dark:bg-surface-lowest rounded-xl animate-pulse" />)}
         </div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+        <div className="bg-white dark:bg-surface-lowest rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-slate-50 dark:bg-surface border-b border-slate-100 dark:border-slate-700">
               <tr>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Pedido</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Cliente</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Total</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Status</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Ações</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest">Pedido</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest">Cliente</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest">Total</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest">Status</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 dark:divide-slate-700">
               {orders.map(order => (
-                <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-surface transition-colors">
                   <td className="p-4">
-                    <span className="text-sm font-bold text-slate-900">#{order.id.split('-')[0]}</span>
-                    <span className="text-[10px] block text-slate-400">{new Date(order.createdAt).toLocaleDateString()}</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-slate-100">#{order.id.split('-')[0]}</span>
+                    <span className="text-[10px] block text-slate-400 dark:text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</span>
                   </td>
                   <td className="p-4">
-                    <span className="text-sm font-bold text-slate-900">{order.clientName}</span>
-                    <span className="text-[10px] block text-slate-400">{order.clientPhone}</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{order.clientName}</span>
+                    <span className="text-[10px] block text-slate-400 dark:text-slate-500">{order.clientPhone}</span>
                   </td>
                   <td className="p-4">
                     <span className="text-sm font-black text-primary">R$ {Number(order.totalAmount).toFixed(2)}</span>

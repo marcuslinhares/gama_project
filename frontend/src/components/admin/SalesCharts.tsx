@@ -7,8 +7,8 @@ import {
 const COLORS = ['#003f87', '#005bb5', '#4a90e2', '#82ca9d', '#ffc658'];
 
 export const SalesEvolutionChart: React.FC<{ data: any[] }> = ({ data }) => (
-  <div className="h-[300px] w-full bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
-    <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest mb-4">Evolução de Vendas (30 dias)</h3>
+  <div className="h-[300px] w-full bg-white dark:bg-surface-lowest p-4 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
+    <h3 className="text-xs font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest mb-4">Evolução de Vendas (30 dias)</h3>
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data}>
         <defs>
@@ -31,8 +31,8 @@ export const SalesEvolutionChart: React.FC<{ data: any[] }> = ({ data }) => (
 );
 
 export const CategoryMixChart: React.FC<{ data: any[] }> = ({ data }) => (
-  <div className="h-[300px] w-full bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
-    <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest mb-4">Mix por Categoria</h3>
+  <div className="h-[300px] w-full bg-white dark:bg-surface-lowest p-4 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
+    <h3 className="text-xs font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest mb-4">Mix por Categoria</h3>
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Pie
