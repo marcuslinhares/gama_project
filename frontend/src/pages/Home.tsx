@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Moon, Sun } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import { useTheme } from '../context/ThemeContext';
 
 const CATEGORIES = ['Tudo', 'Construção', 'Alimentos', 'Limpeza', 'Higiene', 'Bebidas'];
 
@@ -13,6 +14,7 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
   const [selectedCategory, setSelectedCategory] = useState('Tudo');
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     fetch('/api/products')
@@ -30,19 +32,30 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
   return (
     <div className="pb-24">
       {/* Header / Search */}
-      <header className="bg-surface-lowest px-4 py-6 sticky top-0 z-10 shadow-sm">
+      <header className="bg-surface-lowest px-4 py-6 sticky top-0 z-30 shadow-sm">
         {user && (
-          <div className="mb-4 px-1">
-            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest block">Bem-vindo</span>
-            <h1 className="text-xl font-black text-slate-900 leading-tight">Olá, {user.name}</h1>
+          <div className="mb-4 px-1 flex justify-between items-start">
+            <div>
+              <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest block">Bem-vindo</span>
+              <h1 className="text-xl font-black text-slate-900 dark:text-slate-100 leading-tight">Olá, {user.name}</h1>
+            </div>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-surface-low transition-colors"
+              aria-label="Alternar tema"
+            >
+              {isDark
+                ? <Sun size={18} className="text-yellow-400" />
+                : <Moon size={18} className="text-slate-400" />}
+            </button>
           </div>
         )}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="O que você precisa hoje?" 
-            className="w-full bg-surface-low rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          <input
+            type="text"
+            placeholder="O que você precisa hoje?"
+            className="w-full bg-surface-low rounded-xl py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
           />
         </div>
       </header>
@@ -60,16 +73,16 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
 
         {/* Categories */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-slate-900 mb-4">Categorias</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Categorias</h2>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {CATEGORIES.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
-                  selectedCategory === category 
-                    ? 'bg-primary text-white shadow-md' 
-                    : 'bg-surface-low text-slate-500'
+                  selectedCategory === category
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-surface-low text-slate-500 dark:text-slate-400'
                 }`}
               >
                 {category}
@@ -81,10 +94,10 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
         {/* Product Grid */}
         <section>
           <div className="flex justify-between items-end mb-4">
-            <h2 className="text-lg font-bold text-slate-900">Para você</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Para você</h2>
             <span className="text-primary text-xs font-bold">Ver tudo</span>
           </div>
-          
+
           {loading ? (
             <div className="grid grid-cols-2 gap-4">
               {[1, 2, 3, 4].map(i => (
@@ -96,10 +109,10 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
               {products
                 .filter(p => selectedCategory === 'Tudo' || p.category === selectedCategory)
                 .map(product => (
-                  <ProductCard 
-                    key={product.id} 
-                    product={product} 
-                    onClick={() => onSelectProduct(product)} 
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onClick={() => onSelectProduct(product)}
                   />
                 ))}
             </div>
