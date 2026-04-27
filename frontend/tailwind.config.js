@@ -4,19 +4,20 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#003f87',
-          container: '#0056b3',
+          DEFAULT: 'var(--color-primary)',
+          container: 'var(--color-primary-container)',
         },
         surface: {
-          DEFAULT: '#f9f9ff',
-          low: '#f2f3fc',
-          lowest: '#ffffff',
-          high: '#e7e8f0',
-          highest: '#e1e2ea',
+          DEFAULT: 'var(--color-surface)',
+          low: 'var(--color-surface-low)',
+          lowest: 'var(--color-surface-lowest)',
+          high: 'var(--color-surface-high)',
+          highest: 'var(--color-surface-highest)',
         },
       },
       fontFamily: {
