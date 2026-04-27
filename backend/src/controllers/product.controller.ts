@@ -17,7 +17,7 @@ export const getProducts = async (req: Request, res: Response) => {
       ORDER BY name ASC
     `);
     res.status(200).json(rows);
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'Error fetching products' });
   }
 };
@@ -44,7 +44,7 @@ export const getProductById = async (req: Request, res: Response) => {
     }
     
     res.status(200).json(rows[0]);
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'Error fetching product' });
   }
 };
