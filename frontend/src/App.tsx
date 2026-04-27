@@ -85,18 +85,18 @@ function App() {
       
       {/* Bottom Nav */}
       {view !== 'details' && view !== 'checkout' && view !== 'success' && view !== 'cart' && !view.startsWith('admin') && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-20">
-          <button 
+        <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md px-6 py-4 flex justify-between items-center shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-20">
+          <button
             onClick={() => setView('home')}
-            className={`flex flex-col items-center gap-1 transition-all ${view === 'home' ? 'text-primary scale-110' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${view === 'home' ? 'text-primary scale-110' : 'text-slate-400 dark:text-slate-500'}`}
           >
             <HomeIcon size={20} />
             <span className="text-[10px] font-bold">Início</span>
           </button>
           
-          <button 
+          <button
             onClick={() => setView('cart')}
-            className={`flex flex-col items-center gap-1 relative transition-all ${view === 'cart' ? 'text-primary scale-110' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 relative transition-all ${view === 'cart' ? 'text-primary scale-110' : 'text-slate-400 dark:text-slate-500'}`}
           >
             <ShoppingCart size={20} />
             {totalItems > 0 && (
@@ -107,9 +107,9 @@ function App() {
             <span className="text-[10px] font-bold">Carrinho</span>
           </button>
           
-          <button 
+          <button
             onClick={() => setView('orders')}
-            className={`flex flex-col items-center gap-1 transition-all ${view === 'orders' ? 'text-primary scale-110' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${view === 'orders' ? 'text-primary scale-110' : 'text-slate-400 dark:text-slate-500'}`}
           >
             <ClipboardList size={20} />
             <span className="text-[10px] font-bold">Pedidos</span>
