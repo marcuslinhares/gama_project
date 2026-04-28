@@ -9,10 +9,11 @@ import Orders from './pages/Orders';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminPromos from './pages/admin/AdminPromos';
+import AdminProducts from './pages/admin/AdminProducts';
 import { useCart } from './context/CartContext';
 import { Home as HomeIcon, ShoppingCart, ClipboardList, ShieldCheck } from 'lucide-react';
 
-type View = 'home' | 'details' | 'cart' | 'checkout' | 'success' | 'orders' | 'admin_dashboard' | 'admin_orders' | 'admin_promo';
+type View = 'home' | 'details' | 'cart' | 'checkout' | 'success' | 'orders' | 'admin_dashboard' | 'admin_orders' | 'admin_promo' | 'admin_products';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -75,7 +76,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-surface">
-      {view === 'home' && <Home user={user} onSelectProduct={navigateToDetails} />}
+      {view === 'home' && <Home user={user} onSelectProduct={navigateToDetails} onLogout={handleLogout} />}
       {view === 'details' && <ProductDetails product={selectedProduct} onBack={navigateToHome} />}
       {view === 'cart' && <Cart onBack={navigateToHome} onCheckout={() => setView('checkout')} />}
       {view === 'checkout' && <Checkout onBack={() => setView('cart')} onSuccess={handleCheckoutSuccess} />}
@@ -84,6 +85,7 @@ function App() {
       {view === 'admin_dashboard' && <AdminDashboard onNavigate={setView} onLogout={handleLogout} />}
       {view === 'admin_orders' && <AdminOrders onBack={() => setView('admin_dashboard')} onLogout={handleLogout} />}
       {view === 'admin_promo' && <AdminPromos onBack={() => setView('admin_dashboard')} onLogout={handleLogout} />}
+      {view === 'admin_products' && <AdminProducts onBack={() => setView('admin_dashboard')} onLogout={handleLogout} />}
       
       {/* Bottom Nav */}
       {view !== 'details' && view !== 'checkout' && view !== 'success' && view !== 'cart' && !view.startsWith('admin') && (
@@ -120,7 +122,7 @@ function App() {
       )}
 
       {/* Admin Quick Switch (Dev Only) */}
-      {user?.role === 'ADMIN' && view !== 'admin_dashboard' && view !== 'admin_orders' && view !== 'admin_promo' && (
+      {user?.role === 'ADMIN' && view !== 'admin_dashboard' && view !== 'admin_orders' && view !== 'admin_promo' && view !== 'admin_products' && (
         <button 
           onClick={() => setView('admin_dashboard')}
           className="fixed bottom-24 right-4 bg-slate-900 text-white p-3 rounded-full shadow-lg z-30 flex items-center gap-2"

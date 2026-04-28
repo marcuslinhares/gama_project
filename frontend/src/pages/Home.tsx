@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Moon, Sun } from 'lucide-react';
+import { Search, Moon, Sun, LogOut } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { useTheme } from '../context/ThemeContext';
 
@@ -8,9 +8,10 @@ const CATEGORIES = ['Tudo', 'Construção', 'Alimentos', 'Limpeza', 'Higiene', '
 interface HomeProps {
   user: any;
   onSelectProduct: (product: any) => void;
+  onLogout: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
+const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
   const [selectedCategory, setSelectedCategory] = useState('Tudo');
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,15 +52,25 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
               <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest block">Bem-vindo</span>
               <h1 className="text-xl font-black text-slate-900 dark:text-slate-100 leading-tight">Olá, {user.name}</h1>
             </div>
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl bg-surface-low transition-colors"
-              aria-label="Alternar tema"
-            >
-              {isDark
-                ? <Sun size={18} className="text-yellow-400" />
-                : <Moon size={18} className="text-slate-400" />}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-xl bg-surface-low transition-colors"
+                aria-label="Alternar tema"
+              >
+                {isDark
+                  ? <Sun size={18} className="text-yellow-400" />
+                  : <Moon size={18} className="text-slate-400" />}
+              </button>
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-1 bg-surface-low text-red-500 font-bold px-3 py-2 rounded-xl transition-all hover:bg-red-50 dark:hover:bg-red-900/20"
+                aria-label="Sair"
+              >
+                <LogOut size={18} />
+                <span className="text-xs">Sair</span>
+              </button>
+            </div>
           </div>
         )}
         <div className="relative">
