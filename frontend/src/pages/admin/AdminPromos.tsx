@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, Plus, Trash2, LogOut } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { ChevronLeft, Plus, Trash2, LogOut, Search } from 'lucide-react';
 
 const CATEGORIES = ['Construção', 'Alimentos', 'Limpeza', 'Higiene', 'Bebidas'];
 
@@ -9,38 +9,138 @@ interface Promotion {
   startsAt?: string; endsAt?: string;
 }
 
+interface Product { id: string; name: string; }
+
 interface AdminPromosProps { onBack: () => void; onLogout: () => void; }
 
-const emptyForm = { type: 'CATEGORY', target: '', discountPercent: '', title: '', startsAt: '', endsAt: '' };
+type FormType = 'CATEGORY' | 'PRODUCT';
+interface PromoForm {
+  type: FormType; target: string; discountPercent: string; title: string; startsAt: string; endsAt: string;
+}
+
+const emptyForm: PromoForm = { type: 'CATEGORY', target: '', discountPercent: '', title: '', startsAt: '', endsAt: '' };
+
+const getAuthHeaders = () => ({
+  'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+  'Content-Type': 'application/json',
+});
+
+interface ProductComboboxProps {
+  products: Product[];
+  value: string;
+  onChange: (id: string) => void;
+  loading: boolean;
+  inputClass: string;
+}
+
+const ProductCombobox: React.FC<ProductComboboxProps> = ({ products, value, onChange, loading, inputClass }) => {
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const selected = useMemo(() => products.find(p => p.id === value), [products, value]);
+  const lowerQuery = query.toLowerCase();
+  const filtered = useMemo(
+    () => query ? products.filter(p => p.name.toLowerCase().includes(lowerQuery)) : products,
+    [query, products, lowerQuery]
+  );
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleSelect = (p: Product) => {
+    onChange(p.id);
+    setQuery('');
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <div
+        className={`${inputClass} flex items-center justify-between cursor-pointer`}
+        onClick={() => { if (!loading) setOpen(o => !o); }}
+      >
+        <span className={selected ? 'text-slate-900 dark:text-slate-100' : 'text-slate-400'}>
+          {loading ? 'Carregando...' : selected ? selected.name : 'Selecione um produto...'}
+        </span>
+        <Search size={14} className="text-slate-400 shrink-0 ml-2" />
+      </div>
+      {open && (
+        <div className="absolute z-50 mt-1 w-full bg-white dark:bg-surface-lowest rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+          <div className="p-2 border-b border-slate-100 dark:border-slate-700">
+            <input
+              autoFocus
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Buscar produto..."
+              className="w-full bg-slate-50 dark:bg-surface-low rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 outline-none"
+            />
+          </div>
+          <ul className="max-h-48 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <li className="px-4 py-3 text-sm text-slate-400">Nenhum produto encontrado</li>
+            ) : filtered.map(p => (
+              <li
+                key={p.id}
+                onClick={() => handleSelect(p)}
+                className={`px-4 py-2 text-sm cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-low transition-colors ${p.id === value ? 'font-bold text-primary' : 'text-slate-700 dark:text-slate-300'}`}
+              >
+                {p.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
   const [promos, setPromos] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<PromoForm>(emptyForm);
   const [formError, setFormError] = useState('');
   const [saving, setSaving] = useState(false);
   const [fetchError, setFetchError] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const productsFetched = useRef(false);
 
-  const token = localStorage.getItem('auth_token');
-  const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+  const productMap = useMemo(() => new Map(products.map(p => [p.id, p])), [products]);
 
   const fetchPromos = useCallback(async () => {
     setLoading(true);
     setFetchError('');
     try {
-      const res = await fetch('/api/admin/promotions', { headers: authHeaders });
+      const res = await fetch('/api/admin/promotions', { headers: getAuthHeaders() });
       const data = await res.json();
       setPromos(Array.isArray(data) ? data : []);
     } catch { setFetchError('Erro ao carregar promoções. Tente novamente.'); } finally { setLoading(false); }
-  }, [authHeaders]);
+  }, []);
 
-  useEffect(() => { fetchPromos(); }, [fetchPromos]);
+  const fetchProducts = useCallback(async () => {
+    if (productsFetched.current) return;
+    productsFetched.current = true;
+    setLoadingProducts(true);
+    try {
+      const res = await fetch('/api/admin/products', { headers: getAuthHeaders() });
+      const data = await res.json();
+      setProducts(Array.isArray(data) ? data : []);
+    } catch { productsFetched.current = false; } finally { setLoadingProducts(false); }
+  }, []);
+
+  useEffect(() => { fetchPromos(); fetchProducts(); }, [fetchPromos, fetchProducts]);
 
   const handleToggle = async (promo: Promotion) => {
     try {
       const res = await fetch(`/api/admin/promotions/${promo.id}`, {
-        method: 'PATCH', headers: authHeaders,
+        method: 'PATCH', headers: getAuthHeaders(),
         body: JSON.stringify({ active: !promo.active })
       });
       if (res.ok) setPromos(prev => prev.map(p => p.id === promo.id ? { ...p, active: !p.active } : p));
@@ -50,7 +150,7 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
   const handleDelete = async (id: string) => {
     if (!confirm('Remover esta promoção?')) return;
     try {
-      const res = await fetch(`/api/admin/promotions/${id}`, { method: 'DELETE', headers: authHeaders });
+      const res = await fetch(`/api/admin/promotions/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
       if (res.ok) setPromos(prev => prev.filter(p => p.id !== id));
     } catch { alert('Erro ao remover'); }
   };
@@ -66,7 +166,7 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
     setSaving(true);
     try {
       const res = await fetch('/api/admin/promotions', {
-        method: 'POST', headers: authHeaders,
+        method: 'POST', headers: getAuthHeaders(),
         body: JSON.stringify({
           type: form.type, target: form.target, discountPercent: discount,
           title: form.title,
@@ -115,14 +215,18 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
             <div>
               <label className={labelClass}>Tipo</label>
               <select value={form.type}
-                onChange={e => setForm(f => ({ ...f, type: e.target.value, target: '' }))}
+                onChange={e => {
+                  const newType = e.target.value as FormType;
+                  setForm(f => ({ ...f, type: newType, target: '' }));
+                  if (newType === 'PRODUCT') fetchProducts();
+                }}
                 className={inputClass}>
                 <option value="CATEGORY">Por Categoria</option>
-                <option value="PRODUCT">Por Produto (UUID)</option>
+                <option value="PRODUCT">Por Produto (nome)</option>
               </select>
             </div>
             <div>
-              <label className={labelClass}>{form.type === 'CATEGORY' ? 'Categoria' : 'UUID do Produto'}</label>
+              <label className={labelClass}>{form.type === 'CATEGORY' ? 'Categoria' : 'Produto'}</label>
               {form.type === 'CATEGORY' ? (
                 <select value={form.target}
                   onChange={e => setForm(f => ({ ...f, target: e.target.value }))}
@@ -131,8 +235,13 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               ) : (
-                <input value={form.target} onChange={e => setForm(f => ({ ...f, target: e.target.value }))}
-                  placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className={inputClass} />
+                <ProductCombobox
+                  products={products}
+                  value={form.target}
+                  onChange={id => setForm(f => ({ ...f, target: id }))}
+                  loading={loadingProducts}
+                  inputClass={inputClass}
+                />
               )}
             </div>
             <div>
@@ -203,7 +312,11 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
                       {promo.type === 'CATEGORY' ? 'Categoria' : 'Produto'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{promo.target}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
+                    {promo.type === 'PRODUCT'
+                      ? (productMap.get(promo.target)?.name ?? '(produto removido)')
+                      : promo.target}
+                  </td>
                   <td className="px-4 py-3 font-bold text-primary">{promo.discountPercent}%</td>
                   <td className="px-4 py-3">
                     <button onClick={() => handleToggle(promo)}
