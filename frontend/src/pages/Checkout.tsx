@@ -112,7 +112,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, onSuccess }) => {
         </section>
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-surface-lowest/80 backdrop-blur-md border-t border-surface-low">
+      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-900 backdrop-blur-md border-t border-surface-low dark:border-slate-700">
         <button 
           onClick={handleFinish}
           disabled={isProcessing}
