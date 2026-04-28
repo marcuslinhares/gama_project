@@ -13,11 +13,12 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
   const [selectedCategory, setSelectedCategory] = useState('Tudo');
+  const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [promotions, setPromotions] = useState<any[]>([]);
   const { isDark, toggleTheme } = useTheme();
-  const promo = promotions[0] ?? null;
+  const promo = promotions[0];
 
   useEffect(() => {
     fetch('/api/products')
@@ -41,6 +42,8 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
       .then(data => Array.isArray(data) ? setPromotions(data) : setPromotions([]))
       .catch(() => setPromotions([]));
   }, []);
+
+  const lowerSearch = searchQuery.toLowerCase();
 
   return (
     <div className="pb-24">
@@ -77,6 +80,8 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
             placeholder="O que você precisa hoje?"
             className="w-full bg-surface-low rounded-xl py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
           />
@@ -140,6 +145,7 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
             <div className="grid grid-cols-2 gap-4">
               {products
                 .filter(p => selectedCategory === 'Tudo' || p.category === selectedCategory)
+                .filter(p => !lowerSearch || p.name.toLowerCase().includes(lowerSearch))
                 .map(product => (
                   <ProductCard
                     key={product.id}
