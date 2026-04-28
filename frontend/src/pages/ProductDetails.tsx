@@ -17,6 +17,7 @@ interface Product {
   tieredPricing: TieredPrice[];
   description?: string;
   image?: string;
+  discountPercent?: number;
 }
 
 interface ProductDetailsProps {
@@ -68,8 +69,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-2">{product.name}</h2>
           <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">SKU: {product.sku}</p>
 
-          <div className="mt-6 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-primary">R$ {getCurrentPrice().toFixed(2)}</span>
+          {(product.discountPercent ?? 0) > 0 && (
+            <div className="mt-4 inline-flex items-center gap-2 bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-xl">
+              <span className="text-red-500 font-black text-sm">{product.discountPercent}% OFF</span>
+            </div>
+          )}
+          <div className="mt-2 flex items-baseline gap-2">
+            {(product.discountPercent ?? 0) > 0 && (
+              <span className="text-lg text-slate-400 dark:text-slate-500 line-through">
+                R$ {getCurrentPrice().toFixed(2)}
+              </span>
+            )}
+            <span className="text-3xl font-bold text-primary">
+              R$ {(product.discountPercent ?? 0) > 0
+                ? (Math.round(getCurrentPrice() * (1 - product.discountPercent! / 100) * 100) / 100).toFixed(2)
+                : getCurrentPrice().toFixed(2)}
+            </span>
             <span className="text-sm text-slate-500 dark:text-slate-400">/ Caixa</span>
           </div>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
