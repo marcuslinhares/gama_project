@@ -14,6 +14,7 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
   const [selectedCategory, setSelectedCategory] = useState('Tudo');
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [promotions, setPromotions] = useState<any[]>([]);
   const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -27,6 +28,16 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
         console.error('Error fetching products:', err);
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    fetch('/api/promotions', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => Array.isArray(data) ? setPromotions(data) : setPromotions([]))
+      .catch(() => setPromotions([]));
   }, []);
 
   return (
@@ -61,15 +72,25 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct }) => {
       </header>
 
       <main className="px-4 mt-6">
-        {/* Banner */}
-        <section className="bg-primary-container rounded-2xl p-6 text-white mb-8 overflow-hidden relative">
-          <div className="relative z-10">
-            <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">Ofertas da Semana</span>
-            <h2 className="text-2xl font-bold mt-1">Até 15% OFF em Construção</h2>
-            <button className="mt-4 bg-white text-primary text-xs font-bold px-4 py-2 rounded-lg">Aproveitar</button>
-          </div>
-          <div className="absolute right-[-20px] bottom-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-        </section>
+        {/* Banner — dynamic promotion */}
+        {promotions.length > 0 && (() => {
+          const promo = promotions[0];
+          return (
+            <section className="bg-primary-container rounded-2xl p-6 text-white mb-8 overflow-hidden relative">
+              <div className="relative z-10">
+                <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">Ofertas da Semana</span>
+                <h2 className="text-2xl font-bold mt-1">{promo.title}</h2>
+                <button
+                  onClick={() => promo.type === 'CATEGORY' && setSelectedCategory(promo.target)}
+                  className="mt-4 bg-white text-primary text-xs font-bold px-4 py-2 rounded-lg"
+                >
+                  Aproveitar
+                </button>
+              </div>
+              <div className="absolute right-[-20px] bottom-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+            </section>
+          );
+        })()}
 
         {/* Categories */}
         <section className="mb-8">
