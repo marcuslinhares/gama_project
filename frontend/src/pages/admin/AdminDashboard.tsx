@@ -33,6 +33,7 @@ const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () =
     { title: 'Faturamento Mês', value: `R$ ${(report.kpis.totalMonth || 0).toFixed(2)}`, icon: <TrendingUp className="text-blue-500" />, color: 'bg-blue-50 dark:bg-blue-900/20' },
     { title: 'Ticket Médio', value: `R$ ${(report.kpis.avgTicket || 0).toFixed(2)}`, icon: <Users className="text-purple-500" />, color: 'bg-purple-50 dark:bg-purple-900/20' },
     { title: 'Promoções Ativas', value: promoCount, icon: <Tag className="text-rose-500" />, color: 'bg-rose-50 dark:bg-rose-900/20', action: () => onNavigate('admin_promo') },
+    { title: 'Produtos', value: 'Gerenciar', icon: <Package className="text-teal-500" />, color: 'bg-teal-50 dark:bg-teal-900/20', action: () => onNavigate('admin_products') },
   ];
 
   return (
