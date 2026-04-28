@@ -71,7 +71,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="bg-surface min-h-screen flex flex-col justify-center p-6">
+    <div className="bg-surface dark:bg-surface-lowest min-h-screen flex flex-col justify-center p-6">
       <div className="max-w-md w-full mx-auto space-y-8">
         <div className="text-center">
           <div className="bg-primary/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
