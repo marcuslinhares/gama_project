@@ -82,7 +82,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
             )}
             <span className="text-3xl font-bold text-primary">
               R$ {(product.discountPercent ?? 0) > 0
-                ? (Math.round(getCurrentPrice() * (1 - product.discountPercent! / 100) * 100) / 100).toFixed(2)
+                ? (Math.round(getCurrentPrice() * (1 - (product.discountPercent ?? 0) / 100) * 100) / 100).toFixed(2)
                 : getCurrentPrice().toFixed(2)}
             </span>
             <span className="text-sm text-slate-500 dark:text-slate-400">/ Caixa</span>

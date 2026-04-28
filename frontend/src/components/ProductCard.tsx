@@ -13,7 +13,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   const basePrice = Number(product.tieredPricing[product.tieredPricing.length - 1].price);
   const hasDiscount = (product.discountPercent ?? 0) > 0;
   const discountedPrice = hasDiscount
-    ? Math.round(basePrice * (1 - (product.discountPercent! / 100)) * 100) / 100
+    ? Math.round(basePrice * (1 - ((product.discountPercent ?? 0) / 100)) * 100) / 100
     : null;
 
   return (
@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
                 R$ {basePrice.toFixed(2)}
               </span>
               <span className="text-lg font-bold text-primary block">
-                R$ {discountedPrice!.toFixed(2)}
+                R$ {(discountedPrice ?? 0).toFixed(2)}
               </span>
             </>
           ) : (
