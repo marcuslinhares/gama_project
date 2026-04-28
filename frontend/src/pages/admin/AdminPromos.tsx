@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, Plus, Trash2, LogOut } from 'lucide-react';
 
 const CATEGORIES = ['Construção', 'Alimentos', 'Limpeza', 'Higiene', 'Bebidas'];
@@ -20,22 +20,22 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
   const [form, setForm] = useState(emptyForm);
   const [formError, setFormError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [fetchError, setFetchError] = useState('');
 
   const token = localStorage.getItem('auth_token');
   const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
-  const fetchPromos = async () => {
+  const fetchPromos = useCallback(async () => {
     setLoading(true);
+    setFetchError('');
     try {
       const res = await fetch('/api/admin/promotions', { headers: authHeaders });
       const data = await res.json();
       setPromos(Array.isArray(data) ? data : []);
-    } catch (e) {
-      // Handle error silently
-    } finally { setLoading(false); }
-  };
+    } catch { setFetchError('Erro ao carregar promoções. Tente novamente.'); } finally { setLoading(false); }
+  }, [authHeaders]);
 
-  useEffect(() => { fetchPromos(); }, []);
+  useEffect(() => { fetchPromos(); }, [fetchPromos]);
 
   const handleToggle = async (promo: Promotion) => {
     try {
@@ -101,6 +101,12 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
           </button>
         </div>
       </header>
+
+      {fetchError && (
+        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-bold px-4 py-3 rounded-xl mb-6">
+          {fetchError}
+        </div>
+      )}
 
       {showForm && (
         <div className="bg-white dark:bg-surface-lowest rounded-3xl p-6 shadow-xl mb-8 border border-slate-100 dark:border-slate-700">
