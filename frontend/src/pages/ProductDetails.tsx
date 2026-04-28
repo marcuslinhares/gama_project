@@ -46,7 +46,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
   return (
     <div className="bg-white dark:bg-surface-lowest min-h-screen pb-24">
       {/* Header */}
-      <header className="px-4 py-6 flex items-center gap-4 sticky top-0 bg-white/80 dark:bg-surface-lowest/80 backdrop-blur-md z-30">
+      <header className="px-4 py-6 flex items-center gap-4 sticky top-0 bg-white/80 dark:bg-slate-800 backdrop-blur-md z-30">
         <button onClick={onBack} className="p-2 hover:bg-surface-low rounded-full transition-colors">
           <ArrowLeft size={24} className="text-slate-900 dark:text-slate-100" />
         </button>
