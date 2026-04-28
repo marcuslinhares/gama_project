@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Package, Users, ArrowUpRight, LogOut, Moon, Sun } from 'lucide-react';
+import { TrendingUp, Package, Users, ArrowUpRight, LogOut, Moon, Sun, Tag } from 'lucide-react';
 import { SalesEvolutionChart, CategoryMixChart } from '../../components/admin/SalesCharts';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -7,6 +7,7 @@ const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () =
   const [stats, setStats] = useState<any>({ salesToday: 0, pendingOrders: 0 });
   const [report, setReport] = useState<any>({ dailySales: [], categorySales: [], kpis: {} });
   const [loading, setLoading] = useState(true);
+  const [promoCount, setPromoCount] = useState(0);
   const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -14,11 +15,13 @@ const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () =
     const headers = { 'Authorization': `Bearer ${token}` };
     Promise.all([
       fetch('/api/admin/stats', { headers }).then(res => res.json()),
-      fetch('/api/admin/reports/sales', { headers }).then(res => res.json())
+      fetch('/api/admin/reports/sales', { headers }).then(res => res.json()),
+      fetch('/api/admin/promotions', { headers }).then(res => res.json()),
     ])
-      .then(([statsData, reportData]) => {
+      .then(([statsData, reportData, promosData]) => {
         setStats(statsData);
         setReport(reportData);
+        setPromoCount(Array.isArray(promosData) ? promosData.filter((p: any) => p.active).length : 0);
         setLoading(false);
       })
       .catch(err => { console.error(err); setLoading(false); });
@@ -29,6 +32,7 @@ const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () =
     { title: 'Pedidos Pendentes', value: stats.pendingOrders, icon: <Package className="text-amber-500" />, color: 'bg-amber-50 dark:bg-amber-900/20', action: () => onNavigate('admin_orders') },
     { title: 'Faturamento Mês', value: `R$ ${(report.kpis.totalMonth || 0).toFixed(2)}`, icon: <TrendingUp className="text-blue-500" />, color: 'bg-blue-50 dark:bg-blue-900/20' },
     { title: 'Ticket Médio', value: `R$ ${(report.kpis.avgTicket || 0).toFixed(2)}`, icon: <Users className="text-purple-500" />, color: 'bg-purple-50 dark:bg-purple-900/20' },
+    { title: 'Promoções Ativas', value: promoCount, icon: <Tag className="text-rose-500" />, color: 'bg-rose-50 dark:bg-rose-900/20', action: () => onNavigate('admin_promo') },
   ];
 
   return (
@@ -45,7 +49,7 @@ const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () =
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
         {cards.map((card, i) => (
           <div key={i} onClick={card.action} className={`p-6 rounded-3xl bg-white dark:bg-surface-lowest shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 flex flex-col justify-between h-40 ${card.action ? 'cursor-pointer hover:scale-[1.02] transition-all' : ''}`}>
             <div className="flex justify-between items-start">
