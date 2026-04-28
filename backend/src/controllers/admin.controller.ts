@@ -24,6 +24,45 @@ export const getAllOrders = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const getOrderById = async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  try {
+    const orderRes = await query(`
+      SELECT
+        o.id, o.status,
+        o.total_amount AS "totalAmount",
+        o.payment_method AS "paymentMethod",
+        o.created_at AS "createdAt",
+        u.name AS "clientName",
+        u.phone AS "clientPhone"
+      FROM orders o
+      JOIN users u ON o.user_id = u.id
+      WHERE o.id = $1
+    `, [id]);
+
+    if (orderRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const itemsRes = await query(`
+      SELECT
+        oi.id,
+        oi.quantity,
+        oi.price_at_purchase AS "priceAtPurchase",
+        p.name AS "productName",
+        p.sku
+      FROM order_items oi
+      JOIN products p ON oi.product_id = p.id
+      WHERE oi.order_id = $1
+    `, [id]);
+
+    res.status(200).json({ ...orderRes.rows[0], items: itemsRes.rows });
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { status } = req.body;
