@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { User } from '../types/api';
 import { Smartphone, Send, ArrowRight } from 'lucide-react';
 
 interface LoginProps {
-  onLoginSuccess: (user: any, token: string) => void;
+  onLoginSuccess: (user: User, token: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {

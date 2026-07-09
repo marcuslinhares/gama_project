@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Clock, CheckCircle2, Truck, XCircle, ChevronRight, RotateCcw } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { Order, OrderItem } from '../types/api';
 
-const STATUS_MAP: any = {
+const STATUS_MAP: Record<OrderStatus, { label: string; icon: React.ReactNode; color: string }> = {
   'PENDING_APPROVAL': { label: 'Pendente', icon: <Clock size={14}/>, color: 'bg-amber-100 text-amber-600 border-amber-200' },
   'APPROVED': { label: 'Aprovado', icon: <CheckCircle2 size={14}/>, color: 'bg-blue-100 text-blue-600 border-blue-200' },
   'SHIPPED': { label: 'Em Rota', icon: <Truck size={14}/>, color: 'bg-purple-100 text-purple-600 border-purple-200' },
@@ -11,7 +12,7 @@ const STATUS_MAP: any = {
 };
 
 const Orders: React.FC = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { addMultipleItems } = useCart();
 
@@ -40,7 +41,7 @@ const Orders: React.FC = () => {
       const order = await res.json();
       
       if (order.items) {
-        const itemsToRepeat = order.items.map((item: any) => ({
+        const itemsToRepeat = order.items.map((item: OrderItem) => ({
           product: {
             id: item.productId,
             name: item.name,

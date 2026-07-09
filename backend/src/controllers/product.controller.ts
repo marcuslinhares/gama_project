@@ -91,8 +91,9 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       [name, description ?? '', category, sku, stock ?? 0, unitPrice, JSON.stringify(tieredPricing ?? [])]
     );
     res.status(201).json(rows[0]);
-  } catch (err: any) {
-    if (err.code === '23505') return res.status(409).json({ message: 'SKU já existe' });
+  } catch (err: unknown) {
+    const pgError = err as { code?: string };
+    if (pgError.code === '23505') return res.status(409).json({ message: 'SKU já existe' });
     res.status(500).json({ message: 'Erro ao criar produto' });
   }
 };
@@ -119,8 +120,9 @@ export const updateProduct = async (req: AuthRequest, res: Response) => {
     );
     if (rows.length === 0) return res.status(404).json({ message: 'Produto não encontrado' });
     res.status(200).json(rows[0]);
-  } catch (err: any) {
-    if (err.code === '23505') return res.status(409).json({ message: 'SKU já existe' });
+  } catch (err: unknown) {
+    const pgError = err as { code?: string };
+    if (pgError.code === '23505') return res.status(409).json({ message: 'SKU já existe' });
     res.status(500).json({ message: 'Erro ao atualizar produto' });
   }
 };

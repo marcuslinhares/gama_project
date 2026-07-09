@@ -1,4 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
+
+interface JWTPayload {
+  userId: string;
+  distributorId: string;
+  role: string;
+}
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_russas_b2b';
@@ -17,8 +23,8 @@ export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunct
   if (authHeader) {
     const token = authHeader.split(' ')[1]; // Bearer TOKEN
 
-    jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
-      if (err) {
+    (jwt.verify as (token: string, secret: string, callback: (err: Error | null, decoded: JWTPayload | undefined) => void) => void)(token, JWT_SECRET, (err: Error | null, decoded: JWTPayload | undefined) => {
+      if (err || !decoded) {
         return res.status(403).json({ message: 'Forbidden: Invalid token' });
       }
 

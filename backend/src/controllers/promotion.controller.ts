@@ -8,7 +8,7 @@ const ACTIVE_CONDITION = `
   AND (pr.ends_at IS NULL OR pr.ends_at > NOW())
 `;
 
-const mapRow = (r: any) => ({ ...r, discountPercent: Number(r.discountPercent) });
+const mapRow = (r: Record<string, unknown>) => ({ ...r, discountPercent: Number(r.discountPercent) });
 
 export const getActivePromotions = async (req: Request, res: Response) => {
   try {
@@ -78,7 +78,7 @@ export const updatePromotion = async (req: AuthRequest, res: Response) => {
   const { type, target, discountPercent, title, active, startsAt, endsAt } = req.body;
 
   const fields: string[] = [];
-  const values: any[] = [];
+  const values: unknown[] = [];
   let idx = 1;
 
   if (type !== undefined) { fields.push(`type = $${idx++}`); values.push(type); }

@@ -11,15 +11,16 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminPromos from './pages/admin/AdminPromos';
 import AdminProducts from './pages/admin/AdminProducts';
 import { useCart } from './context/CartContext';
+import { User, Product } from './types/api';
 import { Home as HomeIcon, ShoppingCart, ClipboardList, ShieldCheck } from 'lucide-react';
 
 type View = 'home' | 'details' | 'cart' | 'checkout' | 'success' | 'orders' | 'admin_dashboard' | 'admin_orders' | 'admin_promo' | 'admin_products';
 
 function App() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('auth_token'));
   const [view, setView] = useState<View>('home');
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
   const { totalItems, clearCart } = useCart();
 
@@ -36,7 +37,7 @@ function App() {
     }
   }, [token]);
 
-  const handleLoginSuccess = (userData: any, userToken: string) => {
+  const handleLoginSuccess = (userData: User, userToken: string) => {
     localStorage.setItem('auth_token', userToken);
     localStorage.setItem('auth_user', JSON.stringify(userData));
     setToken(userToken);
@@ -54,7 +55,7 @@ function App() {
     setView('home');
   };
 
-  const navigateToDetails = (product: any) => {
+  const navigateToDetails = (product: Product) => {
     setSelectedProduct(product);
     setView('details');
   };

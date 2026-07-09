@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { query, getClient } from '../db';
 import { AuthRequest } from '../middleware/auth.middleware';
+import { TieredPrice } from '../models/product.model';
 
 export const previewOrder = async (req: Request, res: Response) => {
   const { items } = req.body;
@@ -24,8 +25,8 @@ export const previewOrder = async (req: Request, res: Response) => {
         const tieredPricing = product.tieredPricing || [];
         
         const tier = tieredPricing
-          .filter((t: any) => item.quantity >= t.minQty)
-          .sort((a: any, b: any) => b.minQty - a.minQty)[0];
+          .filter((t: TieredPrice) => item.quantity >= t.minQty)
+          .sort((a: TieredPrice, b: TieredPrice) => b.minQty - a.minQty)[0];
           
         if (tier) price = Number(tier.price);
         subtotal += price * item.quantity;
@@ -84,8 +85,8 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       const tieredPricing = product.tieredPricing || [];
       
       const tier = tieredPricing
-        .filter((t: any) => item.quantity >= t.minQty)
-        .sort((a: any, b: any) => b.minQty - a.minQty)[0];
+        .filter((t: TieredPrice) => item.quantity >= t.minQty)
+        .sort((a: TieredPrice, b: TieredPrice) => b.minQty - a.minQty)[0];
         
       if (tier) price = Number(tier.price);
       
@@ -117,12 +118,13 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
     await client.query('COMMIT');
     res.status(201).json(newOrder);
-  } catch (error: any) {
+  } catch (error: unknown) {
     await client.query('ROLLBACK');
     console.error('Error creating order:', error);
     
-    if (error.message.includes('Product not found') || error.message.includes('Insufficient stock')) {
-      return res.status(400).json({ message: error.message });
+    const err = error as Error;
+    if (err.message.includes('Product not found') || err.message.includes('Insufficient stock')) {
+      return res.status(400).json({ message: err.message });
     }
     
     res.status(500).json({ message: 'Internal server error' });

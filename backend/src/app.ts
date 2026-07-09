@@ -1,8 +1,6 @@
-import 'reflect-metadata';
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan from 'morgan';
 import dotenv from 'dotenv';
 import productRoutes from './routes/product.routes';
 import orderRoutes from './routes/order.routes';
@@ -17,7 +15,7 @@ const app: Express = express();
 // Middlewares
 app.use(helmet());
 app.use(cors());
-app.use(morgan('dev'));
+app.use((req, res, next) => { console.log(req.method, req.url); next(); });
 app.use(express.json());
 
 // Routes

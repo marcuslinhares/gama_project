@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Package, Users, ArrowUpRight, LogOut, Moon, Sun, Tag } from 'lucide-react';
 import { SalesEvolutionChart, CategoryMixChart } from '../../components/admin/SalesCharts';
+import { AdminStats, SalesReport, Promotion } from '../../types/api';
 import { useTheme } from '../../context/ThemeContext';
 
-const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () => void }> = ({ onNavigate, onLogout }) => {
-  const [stats, setStats] = useState<any>({ salesToday: 0, pendingOrders: 0 });
-  const [report, setReport] = useState<any>({ dailySales: [], categorySales: [], kpis: {} });
+const AdminDashboard: React.FC<{ onNavigate: (view: View) => void, onLogout: () => void }> = ({ onNavigate, onLogout }) => {
+  const [stats, setStats] = useState<AdminStats>({ salesToday: 0, pendingOrders: 0 });
+  const [report, setReport] = useState<SalesReport>({ dailySales: [], categorySales: [], kpis: { totalMonth: 0, avgTicket: 0, totalOrders: 0 } });
   const [loading, setLoading] = useState(true);
   const [promoCount, setPromoCount] = useState(0);
   const { isDark, toggleTheme } = useTheme();
@@ -21,7 +22,7 @@ const AdminDashboard: React.FC<{ onNavigate: (view: any) => void, onLogout: () =
       .then(([statsData, reportData, promosData]) => {
         setStats(statsData);
         setReport(reportData);
-        setPromoCount(Array.isArray(promosData) ? promosData.filter((p: any) => p.active).length : 0);
+        setPromoCount(Array.isArray(promosData) ? promosData.filter((p: Promotion) => p.active).length : 0);
         setLoading(false);
       })
       .catch(err => { console.error(err); setLoading(false); });

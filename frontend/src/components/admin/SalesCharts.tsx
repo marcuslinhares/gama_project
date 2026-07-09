@@ -6,7 +6,7 @@ import {
 
 const COLORS = ['#003f87', '#005bb5', '#4a90e2', '#82ca9d', '#ffc658'];
 
-export const SalesEvolutionChart: React.FC<{ data: any[] }> = ({ data }) => (
+export const SalesEvolutionChart: React.FC<{ data: Array<{ date: string; total: number }> }> = ({ data }) => (
   <div className="h-[300px] w-full bg-white dark:bg-surface-lowest p-4 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
     <h3 className="text-xs font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest mb-4">Evolução de Vendas (30 dias)</h3>
     <ResponsiveContainer width="100%" height="100%">
@@ -22,7 +22,7 @@ export const SalesEvolutionChart: React.FC<{ data: any[] }> = ({ data }) => (
         <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94a3b8'}} tickFormatter={(v) => `R$ ${v}`} />
         <Tooltip 
           contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-          formatter={(value: any) => [`R$ ${value.toFixed(2)}`, 'Vendas']}
+          formatter={(value: number | undefined) => value ? [`R$ ${value.toFixed(2)}`, 'Vendas'] : ['R$ 0,00', 'Vendas']}
         />
         <Area type="monotone" dataKey="total" stroke="#003f87" strokeWidth={3} fillOpacity={1} fill="url(#colorTotal)" />
       </AreaChart>
@@ -30,7 +30,7 @@ export const SalesEvolutionChart: React.FC<{ data: any[] }> = ({ data }) => (
   </div>
 );
 
-export const CategoryMixChart: React.FC<{ data: any[] }> = ({ data }) => (
+export const CategoryMixChart: React.FC<{ data: Array<{ name: string; value: number }> }> = ({ data }) => (
   <div className="h-[300px] w-full bg-white dark:bg-surface-lowest p-4 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
     <h3 className="text-xs font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest mb-4">Mix por Categoria</h3>
     <ResponsiveContainer width="100%" height="100%">

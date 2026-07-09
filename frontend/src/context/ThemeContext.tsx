@@ -7,12 +7,9 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const getInitialTheme = (): boolean => {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'dark') return true;
-  if (saved === 'light') return false;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-};
+const getInitialTheme = (): boolean =>
+  localStorage.getItem('theme') === 'dark' ||
+  (localStorage.getItem('theme') === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDark, setIsDark] = useState<boolean>(getInitialTheme);

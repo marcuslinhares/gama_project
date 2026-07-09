@@ -14,13 +14,13 @@ type SortField = 'createdAt' | 'totalAmount' | 'clientName';
 type SortDir = 'asc' | 'desc';
 
 const AdminOrders: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ onBack, onLogout }) => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
   const fetchOrders = async () => {
@@ -55,7 +55,7 @@ const AdminOrders: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ o
       if (res.ok) {
         setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
         if (selectedOrder?.id === orderId) {
-          setSelectedOrder((prev: any) => ({ ...prev, status: newStatus }));
+          setSelectedOrder((prev: AdminOrder | null) => ({ ...prev, status: newStatus }));
         }
       }
     } catch (err) {
@@ -105,7 +105,7 @@ const AdminOrders: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ o
         return matchSearch && matchStatus;
       })
       .sort((a, b) => {
-        let va: any, vb: any;
+        let va: AdminOrder, vb: AdminOrder;
         if (sortField === 'createdAt') { va = new Date(a.createdAt).getTime(); vb = new Date(b.createdAt).getTime(); }
         else if (sortField === 'totalAmount') { va = Number(a.totalAmount); vb = Number(b.totalAmount); }
         else { va = a.clientName?.toLowerCase() ?? ''; vb = b.clientName?.toLowerCase() ?? ''; }
@@ -286,7 +286,7 @@ const AdminOrders: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ o
                     <span className="text-xs font-black uppercase text-slate-400 tracking-widest">Itens do Pedido</span>
                   </div>
                   <div className="space-y-3">
-                    {selectedOrder.items?.length > 0 ? selectedOrder.items.map((item: any) => (
+                    {selectedOrder.items?.length > 0 ? selectedOrder.items.map((item: AdminOrder['items'][0]) => (
                       <div key={item.id} className="flex justify-between items-center bg-slate-50 dark:bg-surface rounded-xl px-4 py-3">
                         <div>
                           <span className="text-sm font-bold text-slate-900 dark:text-slate-100 block">{item.productName}</span>

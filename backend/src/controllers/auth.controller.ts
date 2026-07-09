@@ -44,36 +44,27 @@ export const verifyOTP = async (req: Request, res: Response) => {
   }
 
   try {
-    // Magic OTP for E2E Testing (Development Only)
-    if (phone === '5588000000000' && code === '999999') {
+    // Magic OTP for E2E Testing (Development Only) — skip DB OTP check
+    const isMagic = phone === '5588000000000' && code === '999999';
+    let user;
+
+    if (isMagic) {
       const { rows } = await query('SELECT * FROM users WHERE phone = $1', [phone]);
-      const user = rows[0] || { id: '00000000-0000-0000-0000-000000000000', distributor_id: '00000000-0000-0000-0000-000000000000', role: 'MERCHANT', name: 'Robô de Teste', phone: '5588000000000' };
-      
-      const token = jwt.sign(
-        { userId: user.id, distributorId: user.distributor_id, role: user.role },
-        JWT_SECRET,
-        { expiresIn: '7d' }
+      user = rows[0] || { id: '00000000-0000-0000-0000-000000000000', distributor_id: '00000000-0000-0000-0000-000000000000', role: 'MERCHANT', name: 'Robô de Teste', phone: '5588000000000' };
+    } else {
+      const { rows } = await query(
+        'SELECT * FROM users WHERE phone = $1 AND otp_code = $2 AND otp_expires_at > NOW()',
+        [phone, code]
       );
 
-      return res.status(200).json({
-        token,
-        user: { id: user.id, name: user.name, phone: user.phone, role: user.role }
-      });
+      if (rows.length === 0) {
+        return res.status(401).json({ message: 'Invalid or expired code' });
+      }
+
+      user = rows[0];
+      // Clear OTP after verification
+      await query('UPDATE users SET otp_code = NULL, otp_expires_at = NULL WHERE id = $1', [user.id]);
     }
-
-    const { rows } = await query(
-      'SELECT * FROM users WHERE phone = $1 AND otp_code = $2 AND otp_expires_at > NOW()',
-      [phone, code]
-    );
-
-    if (rows.length === 0) {
-      return res.status(401).json({ message: 'Invalid or expired code' });
-    }
-
-    const user = rows[0];
-
-    // Clear OTP after verification
-    await query('UPDATE users SET otp_code = NULL, otp_expires_at = NULL WHERE id = $1', [user.id]);
 
     const token = jwt.sign(
       { userId: user.id, distributorId: user.distributor_id, role: user.role },
@@ -83,12 +74,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
 
     res.status(200).json({
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        phone: user.phone,
-        role: user.role
-      }
+      user: { id: user.id, name: user.name, phone: user.phone, role: user.role }
     });
   } catch (error) {
     console.error('Error in verifyOTP:', error);

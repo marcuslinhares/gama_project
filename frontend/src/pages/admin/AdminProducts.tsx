@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, LogOut, Search, Plus, Pencil, Trash2, X, ChevronUp, ChevronDown, Package } from 'lucide-react';
-
-const CATEGORIES = ['Construção', 'Alimentos', 'Limpeza', 'Higiene', 'Bebidas'];
+import { CATEGORIES } from '../../types/api';
 
 const emptyForm = {
   name: '', description: '', category: 'Construção', sku: '',
@@ -12,7 +11,7 @@ type SortField = 'name' | 'stock' | 'unitPrice' | 'category';
 type SortDir = 'asc' | 'desc';
 
 const AdminProducts: React.FC<{ onBack: () => void, onLogout: () => void }> = ({ onBack, onLogout }) => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -50,7 +49,7 @@ const AdminProducts: React.FC<{ onBack: () => void, onLogout: () => void }> = ({
     setModalOpen(true);
   };
 
-  const openEdit = (p: any) => {
+  const openEdit = (p: Product) => {
     setEditingId(p.id);
     setForm({
       name: p.name,
@@ -135,7 +134,7 @@ const AdminProducts: React.FC<{ onBack: () => void, onLogout: () => void }> = ({
         return matchSearch && matchCat;
       })
       .sort((a, b) => {
-        let va: any, vb: any;
+        let va: Product, vb: Product;
         if (sortField === 'name') { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }
         else if (sortField === 'stock') { va = a.stock; vb = b.stock; }
         else if (sortField === 'unitPrice') { va = Number(a.unitPrice); vb = Number(b.unitPrice); }

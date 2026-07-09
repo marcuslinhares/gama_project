@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronLeft, Plus, Trash2, LogOut, Search } from 'lucide-react';
-
-const CATEGORIES = ['Construção', 'Alimentos', 'Limpeza', 'Higiene', 'Bebidas'];
+import { CATEGORIES } from '../../types/api';
 
 interface Promotion {
   id: string; type: 'CATEGORY' | 'PRODUCT'; target: string;
@@ -110,11 +109,10 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
   const [fetchError, setFetchError] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
-  const productsFetched = useRef(false);
 
   const productMap = useMemo(() => new Map(products.map(p => [p.id, p])), [products]);
 
-  const fetchPromos = useCallback(async () => {
+  const fetchPromos = async () => {
     setLoading(true);
     setFetchError('');
     try {
@@ -122,20 +120,21 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
       const data = await res.json();
       setPromos(Array.isArray(data) ? data : []);
     } catch { setFetchError('Erro ao carregar promoções. Tente novamente.'); } finally { setLoading(false); }
-  }, []);
+  };
 
-  const fetchProducts = useCallback(async () => {
-    if (productsFetched.current) return;
-    productsFetched.current = true;
+  const loadProducts = () => {
     setLoadingProducts(true);
-    try {
-      const res = await fetch('/api/admin/products', { headers: getAuthHeaders() });
-      const data = await res.json();
-      setProducts(Array.isArray(data) ? data : []);
-    } catch { productsFetched.current = false; } finally { setLoadingProducts(false); }
-  }, []);
+    fetch('/api/admin/products', { headers: getAuthHeaders() })
+      .then(res => res.json())
+      .then(data => setProducts(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setLoadingProducts(false));
+  };
 
-  useEffect(() => { fetchPromos(); fetchProducts(); }, [fetchPromos, fetchProducts]);
+  useEffect(() => {
+    fetchPromos();
+    loadProducts();
+  }, []);
 
   const handleToggle = async (promo: Promotion) => {
     try {
@@ -218,7 +217,7 @@ const AdminPromos: React.FC<AdminPromosProps> = ({ onBack, onLogout }) => {
                 onChange={e => {
                   const newType = e.target.value as FormType;
                   setForm(f => ({ ...f, type: newType, target: '' }));
-                  if (newType === 'PRODUCT') fetchProducts();
+                  if (newType === 'PRODUCT') loadProducts();
                 }}
                 className={inputClass}>
                 <option value="CATEGORY">Por Categoria</option>

@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Moon, Sun, LogOut } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import { User, Product, Promotion, CATEGORIES } from '../types/api';
 import { useTheme } from '../context/ThemeContext';
 
-const CATEGORIES = ['Tudo', 'Construção', 'Alimentos', 'Limpeza', 'Higiene', 'Bebidas'];
+const ALL_CATEGORIES = ['Tudo', ...CATEGORIES];
 
 interface HomeProps {
-  user: any;
-  onSelectProduct: (product: any) => void;
+  user: User | null;
+  onSelectProduct: (product: Product) => void;
   onLogout: () => void;
 }
 
 const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
   const [selectedCategory, setSelectedCategory] = useState('Tudo');
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [promotions, setPromotions] = useState<any[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const { isDark, toggleTheme } = useTheme();
   const promo = promotions[0];
 
@@ -112,7 +113,7 @@ const Home: React.FC<HomeProps> = ({ user, onSelectProduct, onLogout }) => {
         <section className="mb-8">
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Categorias</h2>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {CATEGORIES.map(category => (
+            {ALL_CATEGORIES.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
